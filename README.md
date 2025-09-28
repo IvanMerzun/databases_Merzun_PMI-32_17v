@@ -143,16 +143,16 @@ CREATE TABLE Услуга_лист (
 
 ## №2.2. Заполненные таблицы
 ### Клиент
-![image](/pictures/cli.png)
+![image](/pictures/Client.png)
 ### Нотариус
-![image](/pictures/nomer.png)
+![image](/pictures/Not.png)
 ### Услуга
-![image](/pictures/bron.png)
+![image](/pictures/Ysl.png)
 ### Прайс-лист
-![image](/pictures/nombro.png)
+![image](/pictures/Prlist.png)
 ### Сделка
-![image](/pictures/zasel.png)
+![image](/pictures/Sdel.png)
 ### Сделка_услуга
-![image](/pictures/zasnom.png)
+![image](/pictures/Sd_ys.png)
 ### Услуга_лист
-![image](/pictures/yslygi.png)
+![image](/pictures/Ys_list.png)
