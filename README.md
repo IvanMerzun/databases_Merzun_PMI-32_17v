@@ -140,3 +140,19 @@ CREATE TABLE Услуга_лист (
 ```
 ## №2.1. Диаграмма
 ![image](/pictures/Diag1.png)
+
+## №2.2. Заполненные таблицы
+### Клиент
+![image](/pictures/cli.png)
+### Нотариус
+![image](/pictures/nomer.png)
+### Услуга
+![image](/pictures/bron.png)
+### Прайс-лист
+![image](/pictures/nombro.png)
+### Сделка
+![image](/pictures/zasel.png)
+### Сделка_услуга
+![image](/pictures/zasnom.png)
+### Услуга_лист
+![image](/pictures/yslygi.png)
