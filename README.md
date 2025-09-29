@@ -238,7 +238,7 @@ SELECT * FROM Service_PriceList
 
 ```
 ## №2.1. Диаграмма
-![image](/pictures/Diag1.png)
+![image](/pictures/Diagr.png)
 
 ## №2.2. Заполненные таблицы
 ### Клиент
