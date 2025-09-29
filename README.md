@@ -241,17 +241,6 @@ SELECT * FROM Service_PriceList
 ![image](/pictures/Diagr.png)
 
 ## №2.2. Заполненные таблицы
-### Клиент
-![image](/pictures/Client.png)
-### Нотариус
-![image](/pictures/Not.png)
-### Услуга
-![image](/pictures/Ysl.png)
-### Прайс-лист
-![image](/pictures/Prlist.png)
-### Сделка
-![image](/pictures/Sdel.png)
-### Сделка_услуга
-![image](/pictures/Sd_ys.png)
-### Услуга_лист
-![image](/pictures/Ys_list.png)
+![image](/pictures/v1.png)
+
+![image](/pictures/v2.png)
