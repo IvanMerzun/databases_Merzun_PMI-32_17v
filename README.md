@@ -73,24 +73,26 @@ DROP TABLE IF EXISTS Services;
 DROP TABLE IF EXISTS PriceList;
 
 CREATE TABLE Client (
-    client_id INT PRIMARY KEY IDENTITY,
+    id INT PRIMARY KEY IDENTITY,
     full_name NVARCHAR(100) NOT NULL,
-    phone NVARCHAR(10) NULL CHECK (phone LIKE '[0-9]%'),
+    phone NVARCHAR(12) NULL CHECK (phone LIKE '8[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'
+    OR phone LIKE '+7[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
     addres NVARCHAR(300) NULL,
     activity_type NVARCHAR(300) NULL
 );
 
 
 CREATE TABLE Notary (
-    notary_id INT PRIMARY KEY IDENTITY,
+    id INT PRIMARY KEY IDENTITY,
     full_name NVARCHAR(100) NOT NULL,
-    phone NVARCHAR(10) NULL CHECK (phone LIKE '[0-9]%'),
+    phone NVARCHAR(12) NULL CHECK (phone LIKE '8[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'
+    OR phone LIKE '+7[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
     email NVARCHAR(50) NULL CHECK (email LIKE '%@%.__%'),
     job_title NVARCHAR(100) NOT NULL
 );
 
 CREATE TABLE Deal (
-    deal_id INT PRIMARY KEY IDENTITY,
+    id INT PRIMARY KEY IDENTITY,
     deal_number INT NOT NULL UNIQUE,
     deal_date DATE NOT NULL DEFAULT GETDATE(),
     total_amount DECIMAL(10,2) NOT NULL CHECK (total_amount >= 0),
@@ -98,21 +100,19 @@ CREATE TABLE Deal (
     deal_status NVARCHAR(20) NOT NULL DEFAULT 'В обработке',
     client_id INT NOT NULL,
     notary_id INT NOT NULL,
-    FOREIGN KEY (client_id) REFERENCES Client(client_id),
-    FOREIGN KEY (notary_id) REFERENCES Notary(notary_id)
+    FOREIGN KEY (client_id) REFERENCES Client(id),
+    FOREIGN KEY (notary_id) REFERENCES Notary(id)
 );
 
-
-
 CREATE TABLE Services (
-    service_id INT PRIMARY KEY IDENTITY,
+    id INT PRIMARY KEY IDENTITY,
     service_name NVARCHAR(100) NOT NULL,
     cost DECIMAL(10,2) NOT NULL CHECK (cost >= 0),
     description NVARCHAR(300) NULL
 );
 
 CREATE TABLE PriceList (
-    pricelist_id INT PRIMARY KEY IDENTITY,
+    id INT PRIMARY KEY IDENTITY,
     pricelist_name NVARCHAR(100) NOT NULL,
     currency NVARCHAR(10) NOT NULL DEFAULT 'RUB',
     date_start DATE NOT NULL DEFAULT GETDATE(),
@@ -126,8 +126,8 @@ CREATE TABLE Deal_Service (
     deal_id INT NOT NULL,
     service_id INT NOT NULL,
     PRIMARY KEY (deal_id, service_id),
-    FOREIGN KEY (deal_id) REFERENCES Deal(deal_id),
-    FOREIGN KEY (service_id) REFERENCES Services(service_id)
+    FOREIGN KEY (deal_id) REFERENCES Deal(id),
+    FOREIGN KEY (service_id) REFERENCES Services(id)
 );
 
 
@@ -135,35 +135,35 @@ CREATE TABLE Service_PriceList (
     service_id INT NOT NULL,
     pricelist_id INT NOT NULL,
     PRIMARY KEY (service_id, pricelist_id),
-    FOREIGN KEY (service_id) REFERENCES Services(service_id),
-    FOREIGN KEY (pricelist_id) REFERENCES PriceList(pricelist_id)
+    FOREIGN KEY (service_id) REFERENCES Services(id),
+    FOREIGN KEY (pricelist_id) REFERENCES PriceList(id)
 );
 
 INSERT INTO Client (full_name, phone, addres, activity_type)
 VALUES 
-(N'Иванов Иван Иванович', '8900123456', N'Москва, ул. Ленина, д.1', N'Физическое лицо'),
-(N'Петров Петр Петрович', '8900234567', N'Санкт-Петербург, Невский пр., д.10', N'Физическое лицо'),
-(N'Сидорова Анна Николаевна', '8900345678', N'Казань, ул. Кремлёвская, д.5', N'ИП'),
-(N'Кузнецов Алексей Павлович', '8900456789', N'Новосибирск, Красный пр., д.20', N'Юридическое лицо'),
-(N'Морозова Ольга Сергеевна', '8900567890', N'Екатеринбург, ул. Мира, д.15', N'Физическое лицо'),
-(N'Васильев Николай Олегович', '8900678901', N'Нижний Новгород, ул. Горького, д.12', N'ИП'),
-(N'Смирнов Дмитрий Алексеевич', '8900789012', N'Ростов-на-Дону, ул. Пушкинская, д.8', N'Юридическое лицо'),
-(N'Федорова Елена Викторовна', '8900890123', N'Самара, ул. Молодогвардейская, д.3', N'Физическое лицо'),
-(N'Михайлов Артем Андреевич', '8900901234', N'Уфа, ул. Октября, д.11', N'Физическое лицо'),
-(N'Григорьев Сергей Валентинович', '8901012345', N'Краснодар, ул. Северная, д.9', N'Юридическое лицо');
+(N'Иванов Иван Иванович', '89001234567', N'Москва, ул. Ленина, д.1', N'Физическое лицо'),
+(N'Петров Петр Петрович', '89002345676', N'Санкт-Петербург, Невский пр., д.10', N'Физическое лицо'),
+(N'Сидорова Анна Николаевна', '89003456784', N'Казань, ул. Кремлёвская, д.5', N'ИП'),
+(N'Кузнецов Алексей Павлович', '89004567893', N'Новосибирск, Красный пр., д.20', N'Юридическое лицо'),
+(N'Морозова Ольга Сергеевна', '89005678903', N'Екатеринбург, ул. Мира, д.15', N'Физическое лицо'),
+(N'Васильев Николай Олегович', '89006789011', N'Нижний Новгород, ул. Горького, д.12', N'ИП'),
+(N'Смирнов Дмитрий Алексеевич', '89007890142', N'Ростов-на-Дону, ул. Пушкинская, д.8', N'Юридическое лицо'),
+(N'Федорова Елена Викторовна', '89008901234', N'Самара, ул. Молодогвардейская, д.3', N'Физическое лицо'),
+(N'Михайлов Артем Андреевич', '89009012384', N'Уфа, ул. Октября, д.11', N'Физическое лицо'),
+(N'Григорьев Сергей Валентинович', '89010123452', N'Краснодар, ул. Северная, д.9', N'Юридическое лицо');
 
 INSERT INTO Notary (full_name, phone, email, job_title)
 VALUES
-(N'Иванова Мария Сергеевна', '8901111222', 'ivanova@mail.ru', N'Главный нотариус'),
-(N'Семенов Павел Викторович', '8901111333', 'semenov@mail.ru', N'Нотариус'),
-(N'Орлова Екатерина Петровна', '8901111444', 'orlova@mail.ru', N'Нотариус'),
-(N'Киселев Игорь Николаевич', '8901111555', 'kiselev@mail.ru', N'Нотариус'),
-(N'Алексеева Оксана Дмитриевна', '8901111666', 'alekseeva@mail.ru', N'Нотариус'),
-(N'Попов Андрей Иванович', '8901111777', 'popov@mail.ru', N'Нотариус'),
-(N'Соколова Татьяна Олеговна', '8901111888', 'sokolova@mail.ru', N'Нотариус'),
-(N'Захаров Владимир Степанович', '8901111999', 'zakharov@mail.ru', N'Нотариус'),
-(N'Калинина Наталья Игоревна', '8901112000', 'kalinina@mail.ru', N'Нотариус'),
-(N'Громов Сергей Владимирович', '8901112111', 'gromov@mail.ru', N'Нотариус');
+(N'Иванова Мария Сергеевна', '89011112226', 'ivanova@mail.ru', N'Главный нотариус'),
+(N'Семенов Павел Викторович', '89011113333', 'semenov@mail.ru', N'Нотариус'),
+(N'Орлова Екатерина Петровна', '89011114440', 'orlova@mail.ru', N'Нотариус'),
+(N'Киселев Игорь Николаевич', '89011115555', 'kiselev@mail.ru', N'Нотариус'),
+(N'Алексеева Оксана Дмитриевна', '89011116662', 'alekseeva@mail.ru', N'Нотариус'),
+(N'Попов Андрей Иванович', '89011117779', 'popov@mail.ru', N'Нотариус'),
+(N'Соколова Татьяна Олеговна', '89011118885', 'sokolova@mail.ru', N'Нотариус'),
+(N'Захаров Владимир Степанович', '89011119997', 'zakharov@mail.ru', N'Нотариус'),
+(N'Калинина Наталья Игоревна', '89011120009', 'kalinina@mail.ru', N'Нотариус'),
+(N'Громов Сергей Владимирович', '89011121110', 'gromov@mail.ru', N'Нотариус');
 
 INSERT INTO Services (service_name, cost, description)
 VALUES
@@ -233,6 +233,8 @@ SELECT * FROM PriceList
 SELECT * FROM Deal
 SELECT * FROM Deal_Service
 SELECT * FROM Service_PriceList
+
+
 
 
 
