@@ -356,4 +356,4 @@ SELECT * FROM Service_PriceList
     <li>Выдать список наиболее популярных услуг (участвующих в сделках максимальное кол-во раз).</li>
   </ol>
 </div>
-<a href="https://github.com/" target="_blank">Лабораторная №3</a>
+<a href="https://github.com/IvanMerzun/databases_Merzun_PMI-32_17v/raw/main/doc/Мерзун_ПМИ32БО.docx" target="_blank">Лабораторная №3</a>
