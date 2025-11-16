@@ -524,3 +524,32 @@ SELECT dbo.GetRevenue('2024-01-01', '2024-09-30') AS Revenue;
 
 
 
+<li><b>Inline-функция, возвращающая для заданной услуги список клиентов, пользовавшихся ей, упорядоченный по убыванию количества использования</li>
+<pre><code>
+GO
+
+CREATE FUNCTION ClientsByService(@ServiceName NVARCHAR(100))
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT TOP 100 PERCENT
+        c.full_name,
+        COUNT(*) AS times_used
+    FROM Client c
+    JOIN Deal d ON d.client_id = c.id
+    JOIN Deal_Service ds ON ds.deal_id = d.id
+    JOIN Services s ON s.id = ds.service_id
+    WHERE s.service_name = @ServiceName
+    GROUP BY c.full_name
+    ORDER BY times_used DESC
+);
+GO
+
+SELECT * FROM ClientsByService(N'Составление доверенности');
+
+</code></pre>
+<img src="pictures/2b.png" alt="2b" width="300">
+
+
+
