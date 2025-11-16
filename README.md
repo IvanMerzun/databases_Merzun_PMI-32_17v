@@ -492,7 +492,35 @@ EXEC ListBelowAverageServices;
 </code></pre>
 <img src="pictures/1d.png" alt="1d" width="800">
 
+ <h4>Создать  3 функции:</h4>
+  <ol type="a">
+    <li><b>Скалярная функция, подсчитывающая выручку конторы за заданный период</li>
+<pre><code>
+GO
 
+CREATE FUNCTION GetRevenue
+(
+    @StartDate DATE,
+    @EndDate DATE
+)
+RETURNS DECIMAL(18,2)
+AS
+BEGIN
+    DECLARE @Revenue DECIMAL(18,2);
+
+    SELECT @Revenue = ISNULL(SUM(total_amount), 0)
+    FROM Deal
+    WHERE deal_date BETWEEN @StartDate AND @EndDate
+      AND deal_status = N'Завершена';
+
+    RETURN @Revenue;
+END
+GO
+
+SELECT dbo.GetRevenue('2024-01-01', '2024-09-30') AS Revenue;
+
+</code></pre>
+<img src="pictures/2a.png" alt="2a" width="300">
 
 
 
