@@ -415,7 +415,7 @@ GO
 
 EXECUTE ClientServicesStats @full_name = N'Кузнецов Алексей Павлович';
 </code></pre>
-<img src="pictures/1b.png" alt="1a" width="800">
+<img src="pictures/1b.png" alt="1b" width="800">
 
 <li><b>Процедура, на входе получающая название услуги, выходной параметр – количество клиентов, которые ее выбирали </li>
 <pre><code>
@@ -437,5 +437,6 @@ GO
 
 EXECUTE CountClientsByService N'Составление доверенности';
 </code></pre>
-<img src="pictures/1с.png" alt="1a" width="800">
-
+<img src="pictures/1с.png" alt="1c" width="800">
+</ol>
+</div>
