@@ -438,5 +438,66 @@ GO
 EXECUTE CountClientsByService N'Составление доверенности';
 </code></pre>
 <img src="pictures/1с.png" alt="1c" width="800">
+
+
+<li><b>Процедура, вызывающая вложенную процедуру, которая подсчитыват среднюю востребованность услуг. Главная процедура выводит список услуг, которые имеют востребованность меньше среднего (в т.ч. и те, которые вообще не востребованы)
+ </li>
+<pre><code>
+GO
+
+CREATE PROCEDURE GetAverageDemand
+    @AvgDemand FLOAT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT @AvgDemand = AVG(Demand * 1.0)
+    FROM (
+        SELECT s.id, COUNT(ds.service_id) AS Demand
+        FROM Services s
+        LEFT JOIN Deal_Service ds ON s.id = ds.service_id
+        GROUP BY s.id
+    ) AS T;
+END
+GO
+
+-- Главная процедура: выводит услуги с востребованностью ниже среднего
+IF OBJECT_ID('ListBelowAverageServices', 'P') IS NOT NULL
+    DROP PROCEDURE ListBelowAverageServices;
+GO
+
+CREATE PROCEDURE ListBelowAverageServices
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Avg FLOAT;
+
+    EXEC GetAverageDemand @AvgDemand = @Avg OUTPUT;
+
+    SELECT 
+        s.id,
+        s.service_name,
+        COUNT(ds.service_id) AS Demand,
+        @Avg AS AverageDemand
+    FROM Services s
+    LEFT JOIN Deal_Service ds ON s.id = ds.service_id
+    GROUP BY s.id, s.service_name
+    HAVING COUNT(ds.service_id) < @Avg
+    ORDER BY s.id;
+END
+GO
+
+EXEC ListBelowAverageServices;
+</code></pre>
+<img src="pictures/1d.png" alt="1d" width="800">
+
+
+
+
+
+
+
+
 </ol>
 </div>
