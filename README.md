@@ -552,4 +552,39 @@ SELECT * FROM ClientsByService(N'Составление доверенности
 <img src="pictures/2b.png" alt="2b" width="300">
 
 
+<li><b>Multi-statement-функция, выдающая список самых «дорогих» клиентов (с максимальной суммой сделок)</li>
+<pre><code>
+GO
+
+CREATE FUNCTION dbo.TopClients()
+RETURNS @Result TABLE
+(
+    client_id INT,
+    full_name NVARCHAR(100),
+    total_amount DECIMAL(18,2)
+)
+AS
+BEGIN
+    INSERT INTO @Result (client_id, full_name, total_amount)
+    SELECT 
+        c.id,
+        c.full_name,
+        SUM(d.total_amount) AS total_amount
+    FROM Client c
+    JOIN Deal d ON d.client_id = c.id
+    GROUP BY c.id, c.full_name;
+
+    DELETE FROM @Result
+    WHERE total_amount < (SELECT MAX(total_amount) FROM @Result);
+
+    RETURN;
+END
+GO
+
+SELECT * FROM dbo.TopClients();
+
+</code></pre>
+<img src="pictures/2c.png" alt="2c" width="300">
+
+</ol>
 
