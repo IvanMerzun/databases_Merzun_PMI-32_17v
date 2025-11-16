@@ -367,4 +367,24 @@ SELECT * FROM Service_PriceList
 <div>
   <h4>Создать  4 различных хранимых процедуры:</h4>
   <ol type="a">
-    <li><b>Процедура без параметров, формирующая список клиентов банка, не погасивших кредиты в срок в виде: клиент, название кредита, сумма, дата выдачи, дата погашения </li>
+    <li><b>a) Процедура без параметров, формирующая список услуг, не пользующихся спросом (не входят ни в одну сделку) </li>
+<pre><code>
+GO
+CREATE PROCEDURE UnusedServices
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT s.id,
+           s.service_name,
+           s.cost,
+           s.description
+    FROM Services s
+    LEFT JOIN Deal_Service ds ON s.id = ds.service_id
+    WHERE ds.service_id IS NULL;  
+END
+GO
+
+EXECUTE UnusedServices;
+</code></pre>
+<img src="pictures//lab4_pics/1a.png" alt="1a" width="800">
