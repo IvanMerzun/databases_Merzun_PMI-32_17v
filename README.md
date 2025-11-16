@@ -388,3 +388,32 @@ GO
 EXECUTE UnusedServices;
 </code></pre>
 <img src="pictures/1a.png" alt="1a" width="800">
+
+<li><b>Процедура, на входе получающая ФИО клиента и формирующая список услуг, которые выбирал клиент во всех своих сделках в виде: название услуги, сколько раз была выбрана </li>
+<pre><code>
+GO
+CREATE PROCEDURE ClientServicesStats
+    @full_name NVARCHAR(200) 
+
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        s.service_name,
+        COUNT(*) AS times_selected
+    FROM Client c
+    JOIN Deal d ON d.client_id = c.id
+    JOIN Deal_Service ds ON ds.deal_id = d.id
+    JOIN Services s ON s.id = ds.service_id
+    WHERE c.full_name = @full_name
+    GROUP BY s.service_name;
+
+
+END
+GO
+
+EXECUTE ClientServicesStats @full_name = N'Кузнецов Алексей Павлович';
+</code></pre>
+<img src="pictures/1b.png" alt="1a" width="800">
+
