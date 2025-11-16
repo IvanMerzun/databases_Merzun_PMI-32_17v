@@ -437,5 +437,5 @@ GO
 
 EXECUTE CountClientsByService N'Составление доверенности';
 </code></pre>
-<img src="pictures/1b.png" alt="1c" width="800">
+<img src="pictures/1c.png" alt="1a" width="800">
 
