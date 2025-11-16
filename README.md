@@ -417,3 +417,25 @@ EXECUTE ClientServicesStats @full_name = N'Кузнецов Алексей Па�
 </code></pre>
 <img src="pictures/1b.png" alt="1a" width="800">
 
+<li><b>Процедура, на входе получающая название услуги, выходной параметр – количество клиентов, которые ее выбирали </li>
+<pre><code>
+GO
+
+CREATE PROCEDURE CountClientsByService
+    @ServiceName NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT COUNT(DISTINCT d.client_id) as CountClient
+    FROM Services s
+    JOIN Deal_Service ds ON s.id = ds.service_id
+    JOIN Deal d ON ds.deal_id = d.id
+    WHERE s.service_name = @ServiceName;
+END
+GO
+
+EXECUTE CountClientsByService N'Составление доверенности';
+</code></pre>
+<img src="pictures/1b.png" alt="1c" width="800">
+
