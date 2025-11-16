@@ -387,4 +387,4 @@ GO
 
 EXECUTE UnusedServices;
 </code></pre>
-<img src="pictures//lab4_pics/1a.png" alt="1a" width="800">
+<img src="pictures/1a.png" alt="1a" width="800">
