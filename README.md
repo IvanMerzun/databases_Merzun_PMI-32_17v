@@ -491,7 +491,7 @@ GO
 EXEC ListBelowAverageServices;
 </code></pre>
 <img src="pictures/1d.png" alt="1d" width="800">
-
+ </ol>
  <h4>Создать  3 функции:</h4>
   <ol type="a">
     <li><b>Скалярная функция, подсчитывающая выручку конторы за заданный период</li>
@@ -524,8 +524,3 @@ SELECT dbo.GetRevenue('2024-01-01', '2024-09-30') AS Revenue;
 
 
 
-
-
-
-</ol>
-</div>
