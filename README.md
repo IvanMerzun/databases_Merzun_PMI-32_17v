@@ -464,7 +464,6 @@ BEGIN
 END
 GO
 
--- Главная процедура: выводит услуги с востребованностью ниже среднего
 IF OBJECT_ID('ListBelowAverageServices', 'P') IS NOT NULL
     DROP PROCEDURE ListBelowAverageServices;
 GO
