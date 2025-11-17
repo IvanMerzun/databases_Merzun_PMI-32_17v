@@ -632,6 +632,63 @@ SELECT * FROM Service_PriceList
 <img src="pictures/3a.png" alt="3a" width="300">
 
 
+<li><b>Последующий триггер на изменение общей суммы сделки – если она становится меньше суммы цен услуг, входящих в сделку, то общая сумма заменяется на сумму цен услуг
+</li>
+<pre><code>
+GO
+
+CREATE TRIGGER trg_UpdateDealTotal
+ON Deal
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    ;WITH Sums AS (
+        SELECT 
+            ds.deal_id,
+            SUM(s.cost) AS sum_services
+        FROM Deal_Service ds
+        JOIN Services s ON s.id = ds.service_id
+        GROUP BY ds.deal_id
+    ),
+    NeedUpdate AS (
+        SELECT 
+            i.id AS deal_id,
+            s.sum_services
+        FROM inserted i
+        JOIN Sums s ON s.deal_id = i.id
+        WHERE i.total_amount < s.sum_services
+    )
+    UPDATE Deal
+    SET total_amount = NU.sum_services
+    FROM NeedUpdate NU
+    WHERE Deal.id = NU.deal_id;
+END;
+GO
+
+SELECT d.id, s.cost
+FROM Deal d
+JOIN Deal_Service ds ON d.id = ds.deal_id
+JOIN Services s ON s.id = ds.service_id
+WHERE d.id = 1;
+
+
+UPDATE Deal
+SET total_amount = 100
+WHERE id = 1;
+
+SELECT id, total_amount FROM Deal WHERE id = 1;
+
+
+UPDATE Deal
+SET total_amount = 10000
+WHERE id = 1;
+
+SELECT id, total_amount FROM Deal WHERE id = 1;
+
+</code></pre>
+<img src="pictures/3b.png" alt="3b" width="300">
 
 
 
