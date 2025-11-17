@@ -464,8 +464,6 @@ BEGIN
 END
 GO
 
-IF OBJECT_ID('ListBelowAverageServices', 'P') IS NOT NULL
-    DROP PROCEDURE ListBelowAverageServices;
 GO
 
 CREATE PROCEDURE ListBelowAverageServices
