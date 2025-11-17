@@ -187,6 +187,7 @@ VALUES
 (N'Консультация по наследству', 1200, N'Консультации без заключения сделки'),
 (N'Проверка подлинности документа', 800, N'Проверка документа без оформления сделки');
 
+
 INSERT INTO PriceList (pricelist_name, currency, date_start, date_end, comment)
 VALUES
 (N'Прайс январь 2024', 'RUB', '2024-01-01', '2024-01-31', N'Тарифы января'),
@@ -261,7 +262,7 @@ VALUES
 (1,1),(2,1),(3,1),(4,1),(5,1),(6,1),(7,1),(8,1),(9,1),(10,1),
 (1,2),(2,2),(3,2),(4,2),(5,2),(6,2),(7,2),(8,2),(9,2),(10,2),
 (1,3),(2,3),(3,3),(4,3),(5,3),(6,3),(7,3),(8,3),(9,3),(10,3),
-(1,4),(2,4),(3,4),(4,4),(5,4),(6,4),(7,4),(8,4),(9,4),(10,4),
+(1,4),(2,4),(3,4),(4,4),(5,4),(6,4),(7,4),(8,4),(9,4),(10,4),(12,4),
 (1,5),(2,5),(3,5),(4,5),(5,5),(6,5),(7,5),(8,5),(9,5),(10,5);
 
 
@@ -272,6 +273,8 @@ SELECT * FROM PriceList
 SELECT * FROM Deal
 SELECT * FROM Deal_Service
 SELECT * FROM Service_PriceList
+
+
 
 
 
@@ -691,7 +694,61 @@ SELECT id, total_amount FROM Deal WHERE id = 1;
 <img src="pictures/3b.png" alt="3b" width="300">
 
 
+<li><b>Замещающий триггер на операцию удаления услуги из прайса – если эта услуга входит хотя бы в одну сделку – удаление не производится, выводится соотв.сообщение
+</li>
+<pre><code>
+GO
 
+CREATE TRIGGER trg_PreventServiceDelete
+ON Service_PriceList
+INSTEAD OF DELETE
+AS
+BEGIN
+    DECLARE @service_id INT,
+            @pricelist_id INT;
+
+    DECLARE del_cursor CURSOR FOR
+        SELECT service_id, pricelist_id
+        FROM DELETED;
+
+    OPEN del_cursor;
+    FETCH NEXT FROM del_cursor INTO @service_id, @pricelist_id;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        IF EXISTS (SELECT 1 FROM Deal_Service WHERE service_id = @service_id)
+        BEGIN
+            PRINT 'Услуга с ID = ' + CAST(@service_id AS NVARCHAR(10)) +
+                  ' из прайс-листа с ID = ' + CAST(@pricelist_id AS NVARCHAR(10)) +
+                  ' используется в сделках. Удаление невозможно.';
+        END
+        ELSE
+        BEGIN
+            DELETE FROM Service_PriceList
+            WHERE service_id = @service_id
+              AND pricelist_id = @pricelist_id;
+        END
+
+        FETCH NEXT FROM del_cursor INTO @service_id, @pricelist_id;
+    END
+
+    CLOSE del_cursor;
+    DEALLOCATE del_cursor;
+END
+GO
+
+DELETE FROM Service_PriceList
+WHERE (service_id = 1 AND pricelist_id = 1)
+   OR (service_id = 12 AND pricelist_id = 4)
+   OR (service_id = 5 AND pricelist_id = 1);
+
+
+SELECT * FROM Service_PriceList
+
+</code></pre>
+<img src="pictures/3c1.png" alt="3c1" width="300">
+<img src="pictures/3c2.png" alt="3c2" width="300">
 
 
 </ol>
+</div>
