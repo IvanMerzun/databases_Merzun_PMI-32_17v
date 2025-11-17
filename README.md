@@ -588,3 +588,53 @@ SELECT * FROM dbo.TopClients();
 
 </ol>
 
+
+ </ol>
+ <h4>Создать  3 триггера:</h4>
+  <ol type="a">
+    <li><b>Триггер любого типа на добавление новой услуги в прайс – если услуга с таким названием уже есть, то она не добавляется
+</li>
+<pre><code>
+GO
+
+CREATE TRIGGER trg_NoDuplicateServiceInPriceList
+ON Service_PriceList
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO Service_PriceList (service_id, pricelist_id)
+    SELECT i.service_id, i.pricelist_id
+    FROM inserted i
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM Service_PriceList sp
+        WHERE sp.service_id = i.service_id
+          AND sp.pricelist_id = i.pricelist_id
+    );
+END
+GO
+
+
+INSERT INTO Service_PriceList (service_id, pricelist_id)
+VALUES (11, 5), (12,5);
+
+INSERT INTO Service_PriceList (service_id, pricelist_id)
+VALUES (11, 5);
+
+INSERT INTO Service_PriceList (service_id, pricelist_id)
+VALUES (12, 5);
+
+SELECT * FROM Service_PriceList
+
+</code></pre>
+<img src="pictures/3a.png" alt="3a" width="300">
+
+
+
+
+
+
+
+</ol>
