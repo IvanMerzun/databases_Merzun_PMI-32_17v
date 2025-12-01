@@ -423,14 +423,14 @@ EXECUTE ClientServicesStats @full_name = N'Кузнецов Алексей Па�
 <li><b>Процедура, на входе получающая название услуги, выходной параметр – количество клиентов, которые ее выбирали </li>
 <pre><code>
 GO
-
 CREATE PROCEDURE CountClientsByService
-    @ServiceName NVARCHAR(100)
+    @ServiceName NVARCHAR(100),
+    @ClientCount INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT COUNT(DISTINCT d.client_id) as CountClient
+    SELECT @ClientCount = COUNT(DISTINCT d.client_id)
     FROM Services s
     JOIN Deal_Service ds ON s.id = ds.service_id
     JOIN Deal d ON ds.deal_id = d.id
@@ -438,7 +438,13 @@ BEGIN
 END
 GO
 
-EXECUTE CountClientsByService N'Составление доверенности';
+DECLARE @Result INT;
+
+EXEC CountClientsByService 
+        @ServiceName = N'Составление доверенности', 
+        @ClientCount = @Result OUTPUT;
+
+SELECT @Result AS ClientsCount;
 </code></pre>
 <img src="pictures/1с.png" alt="1c" width="800">
 
