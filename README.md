@@ -578,22 +578,21 @@ RETURNS @Result TABLE
 AS
 BEGIN
     INSERT INTO @Result (client_id, full_name, total_amount)
-    SELECT 
+    SELECT TOP 1 WITH TIES
         c.id,
         c.full_name,
         SUM(d.total_amount) AS total_amount
     FROM Client c
     JOIN Deal d ON d.client_id = c.id
-    GROUP BY c.id, c.full_name;
-
-    DELETE FROM @Result
-    WHERE total_amount < (SELECT MAX(total_amount) FROM @Result);
+    GROUP BY c.id, c.full_name
+    ORDER BY SUM(d.total_amount) DESC;
 
     RETURN;
 END
 GO
 
 SELECT * FROM dbo.TopClients();
+
 
 </code></pre>
 <img src="pictures/2c.png" alt="2c" width="300">
