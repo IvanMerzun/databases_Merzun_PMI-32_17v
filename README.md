@@ -470,29 +470,35 @@ BEGIN
 END
 GO
 
+
 GO
 
 CREATE PROCEDURE ListBelowAverageServices
+    @Average FLOAT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @Avg FLOAT;
-
-    EXEC GetAverageDemand @AvgDemand = @Avg OUTPUT;
+    EXEC GetAverageDemand @AvgDemand = @Average OUTPUT;
 
     SELECT 
         s.id,
         s.service_name,
         COUNT(ds.service_id) AS Demand,
-        @Avg AS AverageDemand
+        @Average AS AverageDemand
     FROM Services s
     LEFT JOIN Deal_Service ds ON s.id = ds.service_id
     GROUP BY s.id, s.service_name
-    HAVING COUNT(ds.service_id) < @Avg
+    HAVING COUNT(ds.service_id) < @Average
     ORDER BY s.id;
 END
 GO
+
+DECLARE @Res FLOAT;
+
+EXEC ListBelowAverageServices @Average = @Res OUTPUT;
+
+PRINT 'Средняя востребованность услуг: ' + CAST(@Res AS NVARCHAR(50));
 
 EXEC ListBelowAverageServices;
 </code></pre>
