@@ -767,6 +767,7 @@ SELECT * FROM Service_PriceList
 [Назад](#content)
 <h3 align="center">
   <a href="#client"></a>
+  Создание графовых таблиц и работа с ними.
 </h3>
 <div>
   
