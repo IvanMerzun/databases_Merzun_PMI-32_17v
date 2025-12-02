@@ -772,4 +772,131 @@ SELECT * FROM Service_PriceList
 <div>
     <h4>1. Схема узлов и ребер:</h4>
   <img src="pictures/Gr.png" alt="Gr" width="300">
+   <h4>2. Скрипт для создания и заполнения графовых таблиц:</h4>
+  </code></pre>
+  USE [base_var17]
+GO
+
+-- Удаляем существующие графовые таблицы если они есть
+DROP TABLE IF EXISTS HAS_DEAL;
+DROP TABLE IF EXISTS EXECUTED;
+DROP TABLE IF EXISTS INCLUDES_SERVICE;
+DROP TABLE IF EXISTS PART_OF_PRICELIST;
+DROP TABLE IF EXISTS Clients;
+DROP TABLE IF EXISTS Deals;
+DROP TABLE IF EXISTS Notaries;
+DROP TABLE IF EXISTS Graph_Services;
+DROP TABLE IF EXISTS PriceLists;
+GO
+
+-- Создаем графовые таблицы (узлы)
+CREATE TABLE Clients (
+    id INT PRIMARY KEY,
+    full_name NVARCHAR(100) NOT NULL,
+    phone NVARCHAR(12) NULL,
+    addres NVARCHAR(300) NULL,
+    activity_type NVARCHAR(300) NULL
+) AS NODE;
+
+CREATE TABLE Deals (
+    id INT PRIMARY KEY,
+    deal_number INT NOT NULL UNIQUE,
+    deal_date DATE NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    commission DECIMAL(10,2) NOT NULL,
+    deal_status NVARCHAR(20) NOT NULL
+) AS NODE;
+
+CREATE TABLE Notaries (
+    id INT PRIMARY KEY,
+    full_name NVARCHAR(100) NOT NULL,
+    phone NVARCHAR(12) NULL,
+    email NVARCHAR(50) NULL,
+    job_title NVARCHAR(100) NOT NULL
+) AS NODE;
+
+-- Переименовываем Services чтобы избежать конфликта
+CREATE TABLE Graph_Services (
+    id INT PRIMARY KEY,
+    service_name NVARCHAR(100) NOT NULL,
+    cost DECIMAL(10,2) NOT NULL,
+    description NVARCHAR(300) NULL
+) AS NODE;
+
+CREATE TABLE PriceLists (
+    id INT PRIMARY KEY,
+    pricelist_name NVARCHAR(100) NOT NULL,
+    currency NVARCHAR(10) NOT NULL,
+    date_start DATE NOT NULL,
+    date_end DATE NULL,
+    comment NVARCHAR(300) NULL
+) AS NODE;
+GO
+
+-- Создаем графовые таблицы (ребра)
+CREATE TABLE HAS_DEAL AS EDGE;
+CREATE TABLE EXECUTED AS EDGE;
+CREATE TABLE INCLUDES_SERVICE AS EDGE;
+CREATE TABLE PART_OF_PRICELIST AS EDGE;
+GO
+
+-- Заполняем
+INSERT INTO Clients (id, full_name, phone, addres, activity_type)
+SELECT id, full_name, phone, addres, activity_type FROM Client;
+
+INSERT INTO Deals (id, deal_number, deal_date, total_amount, commission, deal_status)
+SELECT id, deal_number, deal_date, total_amount, commission, deal_status FROM Deal;
+
+INSERT INTO Notaries (id, full_name, phone, email, job_title)
+SELECT id, full_name, phone, email, job_title FROM Notary;
+
+INSERT INTO Graph_Services (id, service_name, cost, description)
+SELECT id, service_name, cost, description FROM Services;
+
+INSERT INTO PriceLists (id, pricelist_name, currency, date_start, date_end, comment)
+SELECT id, pricelist_name, currency, date_start, date_end, comment FROM PriceList;
+GO
+
+-- Создаем связи HAS_DEAL (Clients -> Deals)
+INSERT INTO HAS_DEAL ($from_id, $to_id)
+SELECT 
+    c.$node_id,
+    d.$node_id
+FROM Clients c
+INNER JOIN Deal rd ON c.id = rd.client_id
+INNER JOIN Deals d ON d.id = rd.id;
+GO
+
+-- Создаем связи EXECUTED (Deals -> Notaries)
+INSERT INTO EXECUTED ($from_id, $to_id)
+SELECT 
+    d.$node_id,
+    n.$node_id
+FROM Deals d
+INNER JOIN Deal rd ON d.id = rd.id
+INNER JOIN Notaries n ON n.id = rd.notary_id;
+GO
+
+-- Создаем связи INCLUDES_SERVICE (Deals -> Graph_Services)
+INSERT INTO INCLUDES_SERVICE ($from_id, $to_id)
+SELECT 
+    d.$node_id,
+    s.$node_id
+FROM Deals d
+INNER JOIN Deal_Service ds ON d.id = ds.deal_id
+INNER JOIN Graph_Services s ON s.id = ds.service_id;
+GO
+
+-- Создаем связи PART_OF_PRICELIST (Graph_Services -> PriceLists)
+INSERT INTO PART_OF_PRICELIST ($from_id, $to_id)
+SELECT 
+    s.$node_id,
+    p.$node_id
+FROM Graph_Services s
+INNER JOIN Service_PriceList sp ON s.id = sp.service_id
+INNER JOIN PriceLists p ON p.id = sp.pricelist_id;
+GO
+
+
+  </code></pre>
 </div>
