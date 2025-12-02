@@ -897,7 +897,7 @@ INNER JOIN Service_PriceList sp ON s.id = sp.service_id
 INNER JOIN PriceLists p ON p.id = sp.pricelist_id;
 GO
   </code></pre>
-  <h4>2. Выполнение запросов из лабораторной №3 часть 2:</h4>
+  <h4>3. Выполнение запросов из лабораторной №3 часть 2:</h4>
   <p><b>Составить следующие запросы:</b></p>
    <ol type="a">
     <li><b>Найти клиентов, пользовавшихся услугами конторы 2 и более раз </li>
