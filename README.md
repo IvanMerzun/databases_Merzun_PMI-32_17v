@@ -770,5 +770,6 @@ SELECT * FROM Service_PriceList
   Создание графовых таблиц и работа с ними.
 </h3>
 <div>
-  
+    <h4>1. Схема узлов и ребер:</h4>
+  <img src="pictures/Gr.png" alt="Gr" width="300">
 </div>
