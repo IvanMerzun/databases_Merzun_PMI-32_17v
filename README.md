@@ -899,12 +899,80 @@ GO
   </code></pre>
   <h4>2. Выполнение запросов из лабораторной №3 часть 2:</h4>
   <p><b>Составить следующие запросы:</b></p>
-  <ol type="a">
-    <li>Найти клиентов, пользовавшихся услугами конторы 2 и более раз.</li>
-    <li>Найти клиентов, заключавших сделки на наибольшую сумму.</li>
-    <li>Посчитать среднее количество сделок, заключаемых за день.</li>
-    <li>Выдать список услуг, никогда не использовавшихся клиентами.</li>
-    <li>Выдать список наиболее популярных услуг (участвующих в сделках максимальное кол-во раз).</li>
-  </ol>
+   <ol type="a">
+    <li><b>Найти клиентов, пользовавшихся услугами конторы 2 и более раз </li>
+<pre><code>
+SELECT 
+    c.id,
+    c.full_name,
+    COUNT(d.id) AS deal_count
+FROM Clients c,
+     Deals d,
+     HAS_DEAL h
+WHERE MATCH (c-(h)->d)
+  AND d.deal_status = N'Завершена'
+GROUP BY c.id, c.full_name
+HAVING COUNT(d.id) >= 2;
+</code></pre>
+<img src="pictures/6a.png" alt="6a" width="800">
+
+  <li><b>Найти клиентов, заключавших сделки на наибольшую сумму </li>
+<pre><code>
+SELECT 
+    c.full_name AS Клиент,
+    d.total_amount AS Сумма_сделки
+FROM Clients c, Deals d, HAS_DEAL h
+WHERE MATCH (c-(h)->d)
+  AND d.total_amount = (SELECT MAX(total_amount) FROM Deals);
+</code></pre>
+<img src="pictures/6b.png" alt="6b" width="800">
   
+
+  <li><b>Посчитать среднее количество сделок, заключаемых за день </li>
+<pre><code>
+SELECT 
+    CAST(AVG(DealsCount) AS DECIMAL(10,2)) AS Среднее_количество_сделок_в_день
+FROM (
+    SELECT 
+        deal_date,
+        COUNT(*) AS DealsCount
+    FROM Deals
+    GROUP BY deal_date
+) AS DailyStats;
+</code></pre>
+<img src="pictures/6c.png" alt="6c" width="800">
+
+<li><b>Выдать список услуг, никогда не использовавшихся клиентами </li>
+<pre><code>
+SELECT 
+    s.service_name
+FROM Graph_Services s
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Deals d, INCLUDES_SERVICE e
+    WHERE MATCH (d-(e)->s)
+);
+</code></pre>
+<img src="pictures/6d.png" alt="6d" width="800">
+
+<li><b>Выдать список наиболее популярных услуг (участвующих в сделках максимальное кол-во раз) </li>
+<pre><code>
+;WITH ServiceUsage AS
+(
+    SELECT
+        s.service_name,
+        COUNT(*) AS UsageCount
+    FROM Graph_Services s, Deals d, INCLUDES_SERVICE e
+    WHERE MATCH (d-(e)->s)
+    GROUP BY s.service_name
+)
+SELECT TOP 1 WITH TIES
+    service_name,
+    UsageCount AS Количество_использований
+FROM ServiceUsage
+ORDER BY UsageCount DESC;
+</code></pre>
+<img src="pictures/6e.png" alt="6e" width="800">
+  
+  </ol>
 </div>
