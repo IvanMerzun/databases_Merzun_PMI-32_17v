@@ -773,7 +773,7 @@ SELECT * FROM Service_PriceList
     <h4>1. Схема узлов и ребер:</h4>
   <img src="pictures/Gr.png" alt="Gr" width="300">
    <h4>2. Скрипт для создания и заполнения графовых таблиц:</h4>
-  </code></pre>
+   <pre><code>
   USE [base_var17]
 GO
 
