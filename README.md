@@ -6,7 +6,8 @@
   <a href="#-lab2"><img alt="lab2" src="https://img.shields.io/badge/Lab2-blue"></a>
   <a href="#-lab3"><img alt="lab3" src="https://img.shields.io/badge/Lab3-blue"></a>
   <a href="#-lab4"><img alt="lab4" src="https://img.shields.io/badge/Lab4-blue"></a>
-  <a href="#-lab6"><img alt="lab6" src="https://img.shields.io/badge/Lab6-blue"></a> 
+  <a href="#-lab6"><img alt="lab6" src="https://img.shields.io/badge/Lab6-blue"></a>
+  <a href="#-lab7"><img alt="lab7" src="https://img.shields.io/badge/Lab7-blue"></a>
 </p>
 <h3 align="center">
   <a href="#client"></a>
@@ -972,7 +973,24 @@ SELECT TOP 1 WITH TIES
 FROM ServiceUsage
 ORDER BY UsageCount DESC;
 </code></pre>
+  
 <img src="pictures/6e.png" alt="6e" width="800">
   
   </ol>
 </div>
+# <img src="https://github.com/user-attachments/assets/e080adec-6af7-4bd2-b232-d43cb37024ac" width="20" height="20"/> Lab7
+[Назад](#content)
+<h3 align="center">
+  <a href="#client"></a>
+</h3>
+
+<div>
+  <h3>Задание 1</h3>
+  <p>Используя базу, полученную в лабораторной 2, создать транзакцию, произвести ее откат и фиксацию. Показать, что данные существовали до отката, удалились после отката, снова были добавлены, и затем были успешно зафиксированы. При необходимости используйте точки сохранения и вложенные транзакции.</p>
+<pre><code>
+ --проверка, что данных нет
+SELECT *
+FROM Client
+WHERE full_name = N'Транзакционный клиент';
+</code></pre>
+<img src="pictures/tr11.png" alt="tr11" width="600">
