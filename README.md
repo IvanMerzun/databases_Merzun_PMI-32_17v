@@ -995,3 +995,45 @@ FROM Client
 WHERE full_name = N'Транзакционный клиент';
 </code></pre>
 <img src="pictures/tr11.png" alt="tr11" width="600">
+
+<pre><code>
+ --транзакция + добавление данных
+ BEGIN TRANSACTION;
+
+INSERT INTO Client (full_name, phone, addres, activity_type)
+VALUES (N'Транзакционный клиент', '89001231212', N'Тестовый адрес', N'Физическое лицо');
+
+--проверяем внутри транзакции
+SELECT *
+FROM Client
+WHERE full_name = N'Транзакционный клиент';
+</code></pre>
+<img src="pictures/tr12.png" alt="tr12" width="600">
+
+<pre><code>
+ --откат транзакции
+ROLLBACK TRANSACTION;
+
+--снова проверка
+SELECT *
+FROM Client
+WHERE full_name = N'Транзакционный клиент';
+</code></pre>
+<img src="pictures/tr13.png" alt="tr13" width="600">
+
+<pre><code>
+--повторная транзакция + фиксация
+BEGIN TRANSACTION;
+
+INSERT INTO Client (full_name, phone, addres, activity_type)
+VALUES (N'Транзакционный клиент', '89001231212', N'Тестовый адрес', N'Физическое лицо');
+
+COMMIT TRANSACTION;
+
+SELECT *
+FROM Client
+WHERE full_name = N'Транзакционный клиент';
+</code></pre>
+<img src="pictures/tr14.png" alt="tr14" width="600">
+
+
