@@ -1256,8 +1256,47 @@ COMMIT;
 INSERT INTO Deal (deal_number, deal_date, total_amount, commission, deal_status, client_id, notary_id)
 VALUES (15000, GETDATE(), 5000, 500, N'Завершена', 15, 4);
 </code></pre>
-
 Вывод: Фантомное чтение возможно.
 
  </ul>
     </li>
+
+<li>SERIALIZABLE. Выполнить сценарии проверки:
+      <ul>
+        
+<li>ФАНТОМ</li>
+        Первое окно:
+        <pre><code>
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+GO
+
+BEGIN TRAN;
+
+SELECT *
+FROM Deal
+WHERE total_amount > 3000;
+
+WAITFOR DELAY '00:00:10';
+
+SELECT *
+FROM Deal
+WHERE total_amount > 3000;
+
+COMMIT;
+</code></pre>
+<img src="pictures/A7.png" alt="A7" width="600">
+      Второе окно:
+         <pre><code>
+INSERT INTO Deal (deal_number, deal_date, total_amount, commission, deal_status, client_id, notary_id)
+VALUES (16000, GETDATE(), 6000, 600, N'Завершена', 15, 4);
+</code></pre>
+Вывод: Фантомное чтение невозможно.
+
+ </ul>
+    </li>
+
+
+
+
+
+
