@@ -1035,5 +1035,42 @@ FROM Client
 WHERE full_name = N'Транзакционный клиент';
 </code></pre>
 <img src="pictures/tr14.png" alt="tr14" width="600">
+<h3>Задание 2</h3>
+  <p>Подготовить SQL-скрипты для выполнения проверок изолированности транзакций. Ваши скрипты должны работать с одной из таблиц, созданных в лабораторной работе №2.</p>
+
+  <h4>Выполнение работы</h4>
+  <ol>
+    <li>READ UNCOMMITTED. Выполнить сценарии проверки:
+      <ul>
+        <li>ГРЯЗНОЕ ЧТЕНИЕ</li>
+        Первое окно:
+        <pre><code>
+        SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+GO
+
+BEGIN TRAN;
 
 
+UPDATE Deal
+SET total_amount = 9999
+WHERE id = 1;
+
+
+SELECT id, total_amount
+FROM Deal
+WHERE id = 1;
+
+WAITFOR DELAY '00:00:10';
+
+ROLLBACK;
+</code></pre>
+      Второе окно:
+         <pre><code>
+      SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+GO
+
+-- Читаем данные, которые ещё не зафиксированы
+SELECT id, total_amount
+FROM Deal
+WHERE id = 1;
+</code></pre>
