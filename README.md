@@ -1045,7 +1045,7 @@ WHERE full_name = N'Транзакционный клиент';
         <li>ГРЯЗНОЕ ЧТЕНИЕ</li>
         Первое окно:
         <pre><code>
-        SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 GO
 
 BEGIN TRAN;
@@ -1074,3 +1074,9 @@ SELECT id, total_amount
 FROM Deal
 WHERE id = 1;
 </code></pre>
+
+<img src="pictures/B11.png" alt="B11" width="600">
+<img src="pictures/B12.png" alt="B12" width="600">
+
+Вывод: На уровне изоляции READ UNCOMMITTED допускается грязное чтение — транзакция может читать незакоммиченные изменения другой транзакции, то есть во втором окне сначала вывелось 9999, а после отработки ROLLBACK в
+первом окне, во втором снова стало 500.
