@@ -1121,3 +1121,88 @@ SELECT total_amount FROM Deal WHERE id = 2;
 
  </ul>
     </li>
+
+
+
+
+
+
+<li>READ COMMITTED. Выполнить сценарии проверки:
+      <ul>
+        <li>ГРЯЗНОЕ ЧТЕНИЕ</li>
+        Первое окно:
+        <pre><code>
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+GO
+
+BEGIN TRAN;
+
+UPDATE Deal
+SET total_amount = 8888
+WHERE id = 3;
+SELECT total_amount FROM Deal WHERE id = 3;
+
+WAITFOR DELAY '00:00:10';
+
+ROLLBACK;
+SELECT total_amount FROM Deal WHERE id = 3;
+</code></pre>
+<img src="pictures/A3.png" alt="A3" width="600">
+
+  Второе окно:
+<pre><code>
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+GO
+
+
+SELECT total_amount
+FROM Deal
+WHERE id = 3;
+</code></pre>
+<img src="pictures/B3.png" alt="B12" width="600">
+
+Вывод: Грязное чтение невозможно.
+
+
+<li>НЕПОВТОРЯЮЩЕЕСЯ ЧТЕНИЕ</li>
+        Первое окно:
+        <pre><code>
+BEGIN TRAN;
+
+SELECT total_amount FROM Deal WHERE id = 2;
+
+WAITFOR DELAY '00:00:10';
+
+UPDATE Deal
+SET total_amount = total_amount + 100
+WHERE id = 2;
+
+
+
+COMMIT;
+SELECT total_amount FROM Deal WHERE id = 2;
+<img src="pictures/A21.png" alt="A21" width="600">
+
+</code></pre>
+      Второе окно:
+         <pre><code>
+BEGIN TRAN;
+
+SELECT total_amount FROM Deal WHERE id = 2;
+
+UPDATE Deal
+SET total_amount = total_amount + 200
+WHERE id = 2;
+
+COMMIT;
+SELECT total_amount FROM Deal WHERE id = 2;
+</code></pre>
+<img src="pictures/B21.png" alt="B21" width="600">
+
+Вывод: Сценарий потерянных изменений при уровне изоляции READ UNCOMMITTED не воспроизводится.
+
+ </ul>
+    </li>
+
+
+    
