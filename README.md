@@ -1099,9 +1099,9 @@ WHERE id = 2;
 
 COMMIT;
 SELECT total_amount FROM Deal WHERE id = 2;
-<img src="pictures/A21.png" alt="A21" width="600">
 
 </code></pre>
+<img src="pictures/A21.png" alt="A21" width="600">
       Второе окно:
          <pre><code>
 BEGIN TRAN;
@@ -1180,9 +1180,8 @@ FROM Deal
 WHERE id = 4;
 
 COMMIT;
-<img src="pictures/A4.png" alt="A4" width="600">
-
 </code></pre>
+<img src="pictures/A4.png" alt="A4" width="600">
       Второе окно:
          <pre><code>
 UPDATE Deal
@@ -1239,28 +1238,26 @@ WHERE id = 6;
         <pre><code>
 BEGIN TRAN;
 
-SELECT total_amount
+SELECT *
 FROM Deal
-WHERE id = 4;
+WHERE total_amount > 4000;
 
 WAITFOR DELAY '00:00:10';
 
-SELECT total_amount
+SELECT *
 FROM Deal
-WHERE id = 4;
+WHERE total_amount > 4000;
 
 COMMIT;
-<img src="pictures/A4.png" alt="A4" width="600">
-
 </code></pre>
+<img src="pictures/A6.png" alt="A6" width="600">
       Второе окно:
          <pre><code>
-UPDATE Deal
-SET total_amount = total_amount + 500
-WHERE id = 4;
+INSERT INTO Deal (deal_number, deal_date, total_amount, commission, deal_status, client_id, notary_id)
+VALUES (15000, GETDATE(), 5000, 500, N'Завершена', 15, 4);
 </code></pre>
 
-Вывод: Неповторяющееся чтение возможно.
+Вывод: Фантомное чтение возможно.
 
  </ul>
     </li>
