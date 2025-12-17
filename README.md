@@ -1080,3 +1080,44 @@ WHERE id = 1;
 
 Вывод: На уровне изоляции READ UNCOMMITTED допускается грязное чтение — транзакция может читать незакоммиченные изменения другой транзакции, то есть во втором окне сначала вывелось 9999, а после отработки ROLLBACK в
 первом окне, во втором снова стало 500.
+
+
+<li>ПОТЕРЯННЫЕ ИЗМЕНЕНИЯ</li>
+        Первое окно:
+        <pre><code>
+BEGIN TRAN;
+
+SELECT total_amount FROM Deal WHERE id = 2;
+
+WAITFOR DELAY '00:00:10';
+
+UPDATE Deal
+SET total_amount = total_amount + 100
+WHERE id = 2;
+
+
+
+COMMIT;
+SELECT total_amount FROM Deal WHERE id = 2;
+<img src="pictures/A21.png" alt="A21" width="600">
+
+</code></pre>
+      Второе окно:
+         <pre><code>
+BEGIN TRAN;
+
+SELECT total_amount FROM Deal WHERE id = 2;
+
+UPDATE Deal
+SET total_amount = total_amount + 200
+WHERE id = 2;
+
+COMMIT;
+SELECT total_amount FROM Deal WHERE id = 2;
+</code></pre>
+<img src="pictures/B21.png" alt="B21" width="600">
+
+Вывод: Сценарий потерянных изменений при уровне изоляции READ UNCOMMITTED не воспроизводится.
+
+ </ul>
+    </li>
