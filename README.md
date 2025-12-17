@@ -1197,3 +1197,70 @@ WHERE id = 4;
 
 
     
+<li>REPEATABLE READ. Выполнить сценарии проверки:
+      <ul>
+        <li>НЕПОВТОРЯЮЩЕЕСЯ ЧТЕНИЕ</li>
+        Первое окно:
+        <pre><code>
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+GO
+
+BEGIN TRAN;
+
+SELECT total_amount
+FROM Deal
+WHERE id = 6;
+
+WAITFOR DELAY '00:00:10';
+
+SELECT total_amount
+FROM Deal
+WHERE id = 6;
+
+COMMIT;
+</code></pre>
+<img src="pictures/A5.png" alt="A5" width="600">
+
+  Второе окно:
+<pre><code>
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+GO
+
+UPDATE Deal
+SET total_amount = total_amount + 1000
+WHERE id = 6;
+</code></pre>
+
+Вывод: Неповторяющееся чтение невозможно.
+
+
+<li>ФАНТОМ</li>
+        Первое окно:
+        <pre><code>
+BEGIN TRAN;
+
+SELECT total_amount
+FROM Deal
+WHERE id = 4;
+
+WAITFOR DELAY '00:00:10';
+
+SELECT total_amount
+FROM Deal
+WHERE id = 4;
+
+COMMIT;
+<img src="pictures/A4.png" alt="A4" width="600">
+
+</code></pre>
+      Второе окно:
+         <pre><code>
+UPDATE Deal
+SET total_amount = total_amount + 500
+WHERE id = 4;
+</code></pre>
+
+Вывод: Неповторяющееся чтение возможно.
+
+ </ul>
+    </li>
