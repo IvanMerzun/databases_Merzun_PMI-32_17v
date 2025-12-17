@@ -1169,37 +1169,28 @@ WHERE id = 3;
         <pre><code>
 BEGIN TRAN;
 
-SELECT total_amount FROM Deal WHERE id = 2;
+SELECT total_amount
+FROM Deal
+WHERE id = 4;
 
 WAITFOR DELAY '00:00:10';
 
-UPDATE Deal
-SET total_amount = total_amount + 100
-WHERE id = 2;
-
-
+SELECT total_amount
+FROM Deal
+WHERE id = 4;
 
 COMMIT;
-SELECT total_amount FROM Deal WHERE id = 2;
-<img src="pictures/A21.png" alt="A21" width="600">
+<img src="pictures/A4.png" alt="A4" width="600">
 
 </code></pre>
       Второе окно:
          <pre><code>
-BEGIN TRAN;
-
-SELECT total_amount FROM Deal WHERE id = 2;
-
 UPDATE Deal
-SET total_amount = total_amount + 200
-WHERE id = 2;
-
-COMMIT;
-SELECT total_amount FROM Deal WHERE id = 2;
+SET total_amount = total_amount + 500
+WHERE id = 4;
 </code></pre>
-<img src="pictures/B21.png" alt="B21" width="600">
 
-Вывод: Сценарий потерянных изменений при уровне изоляции READ UNCOMMITTED не воспроизводится.
+Вывод: Неповторяющееся чтение возможно.
 
  </ul>
     </li>
