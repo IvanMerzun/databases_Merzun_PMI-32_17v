@@ -1703,7 +1703,7 @@ print("Средняя температура до обновления:", avg_be
 print("Средняя температура после обновления:", avg_after);
 print("Изменение средней температуры:", avg_after - avg_before);
 </code></pre>
-<img src="pictures/8.2.7.png" alt="Схема 8.2.7" width="450"> <br>
+<img src="pictures/827.png" alt="827" width="450"> <br>
   </ol>
 </div>
 
