@@ -8,6 +8,7 @@
   <a href="#-lab4"><img alt="lab4" src="https://img.shields.io/badge/Lab4-blue"></a>
   <a href="#-lab6"><img alt="lab6" src="https://img.shields.io/badge/Lab6-blue"></a>
   <a href="#-lab7"><img alt="lab7" src="https://img.shields.io/badge/Lab7-blue"></a>
+  <a href="#-lab8"><img alt="lab7" src="https://img.shields.io/badge/Lab8-blue"></a>
 </p>
 <h3 align="center">
   <a href="#client"></a>
@@ -1294,7 +1295,417 @@ VALUES (16000, GETDATE(), 6000, 600, N'Завершена', 15, 4);
 
  </ul>
     </li>
+</div>
 
+
+
+# <img src="https://github.com/user-attachments/assets/e080adec-6af7-4bd2-b232-d43cb37024ac" width="20" height="20"/> Lab8
+[Назад](#content)
+<h3 align="center">
+  <a href="#client"></a>
+</h3>
+
+<div>
+  <h4>Задание 1</h4>
+
+  <p>Выполните запросы :</p>
+  <ol>
+    <li>Выведите все документы коллекции Ресторан в формате: restaurant_id, name, borough и cuisine, вывод _id для всех документов исключить.</li>
+<pre><code>
+db.restaurants.find(
+    {},
+    {
+        _id: 0,
+        restaurant_id: 1,
+        name: 1,
+        borough: 1,
+        cuisine: 1
+    }
+)
+</code></pre>
+<img src="pictures/811.png" alt="811" width="260"> 
+    <li>Выведите первые 5 ресторанов в алфавитном порядке, которые находятся в районе Bronx.</li>
+<pre><code>
+db.restaurants.find(
+  { borough: "Bronx" },
+  { _id: 0, name: 1, borough: 1, cuisine: 1, restaurant_id: 1 }
+).sort({ name: 1 }).limit(5)
+</code></pre>
+<img src="pictures/812.png" alt="812" width="450"> <br>
+    <li>Найдите рестораны, которые набрали более 80, но менее 100 баллов.</li>
+<pre><code>
+db.restaurants.find(
+  { 
+    grades: { $elemMatch: { score: { $gt: 80, $lt: 100 } } } 
+  },
+  { 
+    _id: 0, 
+    name: 1, 
+    borough: 1, 
+    cuisine: 1, 
+    restaurant_id: 1, 
+    grades: 1 
+  }
+)
+</code></pre>
+<img src="pictures/813.png" alt="813" width="450"> <br>
+    <li>Найдите рестораны, которые не относятся к типу кухни American, получили оценку «А», не расположены в районе Brooklyn. Документ должен отображаться в соответствии с кухней в порядке убывания. (Их много. На скринах не все)</li>
+<pre><code>
+db.restaurants.find(
+  {
+    cuisine: { $ne: "American" },
+    borough: { $ne: "Brooklyn" },
+    grades: { $elemMatch: { grade: "A" } }
+  },
+  { _id: 0, name: 1, borough: 1, cuisine: 1, restaurant_id: 1, grades: 1 }
+).sort({ cuisine: -1 })
+</code></pre>
+<img src="pictures/814.png" alt="814" width="375">
+    <li>Найдите идентификатор ресторана, название, район и кухню для тех ресторанов, чье название начинается с первых трех букв назвали «Wil»</li>
+<pre><code>
+db.restaurants.find(
+  { name: { $regex: /^Wil/ } },
+  { _id: 0, restaurant_id: 1, name: 1, borough: 1, cuisine: 1 }
+)
+</code></pre>
+<img src="pictures/815.png" alt="815" width="450"> <br>
+    <li>Найдите рестораны, которые относятся к району Bronx и готовят American или Chinese блюда.</li>
+<pre><code>
+db.restaurants.find(
+  {
+    borough: "Bronx",
+    $or: [
+      { cuisine: "American" },
+      { cuisine: "Chinese" }
+    ]
+  },
+  { _id: 0, name: 1, borough: 1, cuisine: 1, restaurant_id: 1 }
+)
+</code></pre>
+<img src="pictures/816.png" alt="816" width="375">
+    <li>Найдите идентификатор ресторана, название и оценки для тех ресторанов, которые «2014-08-11T00: 00: 00Z» набрали 9 баллов за оценку А</li>
+<pre><code>
+db.restaurants.find(
+  {
+    grades: {
+      $elemMatch: {
+        "date.$date": 1407715200000,
+        grade: "A",
+        score: 9
+      }
+    }
+  },
+  {
+    _id: 0,
+    restaurant_id: 1,
+    name: 1,
+    grades: 1
+  }
+)
+</code></pre>
+<img src="pictures/817.png" alt="817" width="450"> <br>
+    <li>В каждом районе посчитайте количество ресторанов по каждому виду кухни. Документ должен иметь формат borough, cuisine, count</li>
+<pre><code>
+db.restaurants.aggregate([
+  {
+    $group: {
+      _id: { borough: "$borough", cuisine: "$cuisine" },
+      count: { $sum: 1 }
+    }
+  },
+  {
+    $project: {
+      _id: 0, // убираем _id
+      borough: "$_id.borough",
+      cuisine: "$_id.cuisine",
+      count: 1
+    }
+  }
+])
+</code></pre>
+<img src="pictures/818.png" alt="818" width="450"> <br>
+    <li>В районе Bronx найдите ресторан с минимальной суммой набранных баллов.</li>
+<pre><code>
+db.restaurants.aggregate([
+  { $match: { borough: "Bronx" } },
+  { $addFields: { totalScore: { $sum: "$grades.score" } } },
+  { $sort: { totalScore: 1 } },
+  { $limit: 1 },
+  { $project: { _id: 0, name: 1, borough: 1, totalScore: 1, cuisine: 1 } }
+])
+</code></pre>
+<img src="pictures/819.png" alt="819" width="450"> <br>
+    <li>Добавьте в коллекцию свой любимый ресторан.</li>
+<pre><code>
+db.restaurants.insertOne({
+  address: {
+    building: "777",
+    street: "ул. Пушкина",
+    zipcode: 999999
+  },
+  borough: "Вологда",
+  cuisine: "Японская кухня",
+  grades: [
+    { date: { "$date": ISODate("2025-12-24T00:00:00Z") }, grade: "A", score: 5 }
+  ],
+  name: "Не придумал",
+  restaurant_id: "6666666666"
+});
+</code></pre>
+<img src="pictures/8110.png" alt="8110" width="450"> <br>
+    <li>В добавленном ресторане укажите информацию о времени его работы.</li>
+<pre><code>
+db.restaurants.insertOne({
+  address: {
+    building: "777",
+    street: "ул. Пушкина",
+    zipcode: 999999
+  },
+  borough: "Вологда",
+  cuisine: "Японская кухня",
+  grades: [
+    { date: { "$date": ISODate("2025-12-24T00:00:00Z") }, grade: "A", score: 5 }
+  ],
+  name: "Не придумал",
+  restaurant_id: "6666666666",
+  working_hours: {
+    monday:    "09:00–23:00, перерыв 16:00–17:00",
+    tuesday:   "09:00–23:00, перерыв 16:00–17:00",
+    wednesday: "09:00–23:00, перерыв 16:00–17:00",
+    thursday:  "09:00–23:00, перерыв 16:00–17:00",
+    friday:    "09:00–02:00, перерыв 16:00–17:00",
+    saturday:  "09:00–02:00, перерыв 16:00–17:00",
+    sunday:    "12:00–23:00, перерыв 16:00–17:00"
+  }
+});
+</code></pre>
+<img src="pictures/8111.png" alt="8111" width="450"> <br>
+    <li>Измените время работы вашего любимого ресторана.</li>
+<pre><code>
+db.restaurants.updateOne(
+  { restaurant_id: "6666666666" }, 
+  { $set: {
+      working_hours: {
+        monday:    "08:00–22:00, перерыв 15:00–16:00",
+        tuesday:   "08:00–22:00, перерыв 15:00–16:00",
+        wednesday: "08:00–22:00, перерыв 15:00–16:00",
+        thursday:  "08:00–22:00, перерыв 15:00–16:00",
+        friday:    "08:00–01:00, перерыв 15:00–16:00",
+        saturday:  "08:00–01:00, перерыв 15:00–16:00",
+        sunday:    "10:00–22:00, перерыв 15:00–16:00"
+      }
+    }
+  }
+);
+</code></pre>
+<img src="pictures/8112.png" alt="Схема 8112" width="450"> <br>
+  </ol>
+
+  <h4>Задание 2</h4>
+
+  <p>Выполните запросы с использованием Aggregate:</p>
+  <ol>
+    <li>Какова разница между максимальной и минимальной температурой в течение года?</li>
+<pre><code>
+db.weather.aggregate([
+  {
+    $group: {
+      _id: null,
+      maxTemp: { $max: "$temperature" },
+      minTemp: { $min: "$temperature" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      temperatureDifference: { $subtract: ["$maxTemp", "$minTemp"] }
+    }
+  }
+])
+</code></pre>
+<img src="pictures/821.png" alt="821" width="450"> <br>
+    <li>Какова средняя температура в году, если исключить 10 дней с самой низкой температурой и 10 дней с самой высокой?</li>
+<pre><code>
+db.weather.aggregate([
+  {
+    $group: {
+      _id: { year: "$year", month: "$month", day: "$day" },
+      avgTemp: { $avg: "$temperature" }
+    }
+  },
+  {
+    $sort: { avgTemp: 1 }
+  },
+  {
+    $skip: 10
+  },
+  {
+    $sort: { avgTemp: -1 }
+  },
+  {
+    $skip: 10
+  },
+  {
+    $group: {
+      _id: null,
+      avgTemperature: { $avg: "$avgTemp" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      avgTemperature: 1
+    }
+  }
+])
+</code></pre>
+<img src="pictures/822.png" alt="822" width="450"> <br>
+    <li>Найти первые 10 записей с самой низкой погодой, когда дул ветер с юга и посчитайте среднюю температуры для этих записей</li>
+<pre><code>
+db.weather.aggregate([
+  {
+    $match: { wind_direction: "Южный" }
+  },
+  {
+    $sort: { temperature: 1 }
+  },
+  {
+    $limit: 10
+  },
+  {
+    $group: {
+      _id: null,
+      avgTemperature: { $avg: "$temperature" },
+      records: { $push: "$$ROOT" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      avgTemperature: 1,
+      records: 1
+    }
+  }
+])
+</code></pre>
+<img src="pictures/823.png" alt="823" width="350">
+    <li>Подсчитайте количество дней, когда шел снег. (Будем считать снегом осадки, которые выпали, когда температура была ниже нуля)</li>
+<pre><code>
+db.weather.aggregate([
+  {
+    $match: { temperature: { $lt: 0 } }
+  },
+  {
+    $group: {
+      _id: { year: "$year", month: "$month", day: "$day" }
+    }
+  },
+  {
+    $count: "snowyDays"
+  }
+])
+</code></pre>
+<img src="pictures/824.png" alt="824" width="450"> <br>
+    <li>В течение зимы иногда шел снег, а иногда дождь. Насколько больше (или меньше) выпало осадков в виде снега.</li>
+<pre><code>
+db.weather.aggregate([
+  {
+    $match: {
+      month: { $in: [12, 1, 2] },
+      code: { $in: ["SN", "RA"] }
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      snowDays: {
+        $sum: { $cond: [{ $eq: ["$code", "SN"] }, 1, 0] }
+      },
+      rainDays: {
+        $sum: { $cond: [{ $eq: ["$code", "RA"] }, 1, 0] }
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      snowDays: 1,
+      rainDays: 1,
+      difference: { $subtract: ["$snowDays", "$rainDays"] }
+    }
+  }
+])
+</code></pre>
+<img src="pictures/825.png" alt="825" width="450"> <br>
+    <li>Какова вероятность того что в ясный день выпадут осадки? (Предположим, что день считается ясным, если ясная погода фиксируется более чем в 75% случаев)</li>
+<pre><code>
+db.weather.aggregate([
+  {
+    $group: {
+      _id: { year: "$year", month: "$month", day: "$day" },
+      total: { $sum: 1 },
+      clear_count: { $sum: { $cond: [{ $eq: ["$code", "CL"] }, 1, 0] } },
+      precipitation_count: { $sum: { $cond: [{ $ne: ["$code", "CL"] }, 1, 0] } }
+    }
+  },
+  {
+    $project: {
+      _id: 1,
+      total: 1,
+      clear_count: 1,
+      precipitation_count: 1,
+      clear_ratio: { $divide: ["$clear_count", "$total"] },
+      has_precipitation: { $gt: ["$precipitation_count", 0] }
+    }
+  },
+  {
+    $match: {
+      clear_ratio: { $gt: 0.75 }
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      clear_days: { $sum: 1 },
+      clear_days_with_precipitation: { $sum: { $cond: ["$has_precipitation", 1, 0] } }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      probability: { $divide: ["$clear_days_with_precipitation", "$clear_days"] }
+    }
+  }
+])
+</code></pre>
+<img src="pictures/826.png" alt="826" width="450"> <br>
+    <li>Увеличьте температуру на один градус при каждом измерении в нечетный день во время зимы. На сколько градусов изменилась средняя температура?</li>
+<pre><code>
+var avg_before = db.weather.aggregate([
+  { $match: { month: { $in: [12, 1, 2] } } }, 
+  { $group: { _id: null, avgTemp: { $avg: "$temperature" } } }
+]).toArray()[0].avgTemp;
+
+db.weather.updateMany(
+  {
+    month: { $in: [12, 1, 2] },
+    day: { $mod: [2, 1] } 
+  },
+  { $inc: { temperature: 1 } }
+);
+
+var avg_after = db.weather.aggregate([
+  { $match: { month: { $in: [12, 1, 2] } } },
+  { $group: { _id: null, avgTemp: { $avg: "$temperature" } } }
+]).toArray()[0].avgTemp;
+
+print("Средняя температура до обновления:", avg_before);
+print("Средняя температура после обновления:", avg_after);
+print("Изменение средней температуры:", avg_after - avg_before);
+</code></pre>
+<img src="pictures/8.2.7.png" alt="Схема 8.2.7" width="450"> <br>
+  </ol>
+</div>
 
 
 
